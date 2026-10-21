@@ -1,4 +1,5 @@
-## Hi there 👋
+GeminiConnect
+AI/Linux OS for Re-Entry. Ethical Capstone Project that replaces the $35/day electronic ankle monitor with dignified, zero-cost digital compliance and the self-funding GET Token. Driven by human-AI collaboration for digital equity.## Hi there 👋
 
 <!--
 **legacy6986/Legacy6986** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
