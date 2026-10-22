@@ -1,0 +1,145 @@
+trixie292206021957
+Repository navigation
+Code
+Issues
+2
+ (2)
+Pull requests
+1
+ (1)
+Discussions
+trixie292206021957/gemini
+/gemini-code-assist[bot
+rickyplambert-seed
+rickyplambert-seed
+3 days ago
+126 lines (109 loc) · 4.54 KB
+
+Code
+
+Blame
+chore(tests): break up sqlalchemy system tests (googleapis#18239)
+Sqlalchemy-spanner and sqlalchemy-bigquery have two sets of integration
+tests: standard system tests, and "compliance" checks. Each of these can
+take > 1 hour, which can put strain on our single kokoro system test
+when run sequentially
+
+This PR drops the compliance checks from the `Kokoro System` check, and
+breaks them out into their own test run
+
+---------
+
+Co-authored-by: gemini-code-assist[bot] <176961590+gemini-code-assist[bot]@users.noreply.github.com>
+main(googleapis/google-cloud-python#18239)
+1 parent 
+f2267bf
+ commit 
+c8ac135
+6 files changed
+
++34
+-5
+Lines changed: 34 additions & 5 deletions
+Search within code
+ 
+‎.kokoro/presubmit/sqlalchemy_compliance.cfg‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,7 @@
+# Format: //devtools/kokoro/config/proto/build.proto
+# Only run compliance nox session.
+env_vars: {
+    key: "NOX_SESSION"
+    value: "compliance"
+}
+‎.kokoro/presubmit/system.cfg‎
+Original file line number	Diff line number	Diff line change
+@@ -5,3 +5,9 @@ env_vars: {
+    key: "NOX_SESSION"
+    value: "system-3.12"
+}
+# Skip compliance tests in system job since they run in dedicated compliance job
+env_vars: {
+    key: "RUN_COMPLIANCE_TESTS"
+    value: "false"
+}
+‎.kokoro/system.sh‎
+Original file line number	Diff line number	Diff line change
+@@ -263,6 +263,12 @@ for path in `find 'packages' \
+    files_to_check=("${package_path}")
+  fi
+
+  # When running compliance tests, only test packages that have compliance suites
+  if [[ "${NOX_SESSION:-}" == "compliance"* && "${package_name:-}" != "sqlalchemy-"* ]]; then
+    printf "SKIP %-20s %-40s %s\n" "[not_applicable]" "${package_name}" "${commit_hash:-HEAD}"
+    continue
+  fi
+  set +e
+  # Passing the array expanded as arguments to git diff.
+  package_modified=$(git diff "${KOKORO_GITHUB_PULL_REQUEST_TARGET_BRANCH}...${KOKORO_GITHUB_PULL_REQUEST_COMMIT}" -- "${files_to_check[@]}" | wc -l)
+‎packages/sqlalchemy-bigquery/README.rst‎
+Original file line number	Diff line number	Diff line change
+@@ -3,7 +3,7 @@ SQLAlchemy Dialect for BigQuery
+
+|GA| |pypi| |versions|
+
+`SQLALchemy Dialects`_
+`SQLAlchemy Dialects`_
+
+- `Dialect Documentation`_
+- `Product Documentation`_
+‎packages/sqlalchemy-spanner/README.rst‎
+Original file line number	Diff line number	Diff line change
+@@ -4,7 +4,7 @@ Spanner dialect for SQLAlchemy
+Spanner dialect for SQLAlchemy represents an interface API designed to
+make it possible to control Cloud Spanner databases with SQLAlchemy API.
+The dialect is built on top of `the Spanner DB
+API <https://github.com/googleapis/python-spanner/tree/master/google/cloud/spanner_dbapi>`__,
+API <https://github.com/googleapis/google-cloud-python/tree/main/packages/google-cloud-spanner/google/cloud/spanner_dbapi>`__,
+which is designed in accordance with
+`PEP-249 <https://www.python.org/dev/peps/pep-0249/>`__.
+
+‎packages/sqlalchemy-spanner/noxfile.py‎
+Original file line number	Diff line number	Diff line change
+@@ -188,7 +188,7 @@ def lint_setup_py(session):
+    session.run("python", "setup.py", "check", "--restructuredtext", "--strict")
+
+
+@nox.session(python=UNIT_TEST_PYTHON_VERSIONS[0])
+@nox.session(python=SYSTEM_COMPLIANCE_MIGRATION_TEST_PYTHON_VERSIONS[0])
+def compliance_test_14(session):
+    """Run SQLAlchemy dialect compliance test suite."""
+    config_file = f"test_compliance_14_{session.python}_{uuid.uuid4().hex[:6]}.cfg"
+@@ -495,10 +495,10 @@ def system(session, test_type):
+            "Credentials or emulator host must be set via environment variable"
+        )
+
+    if os.environ.get("RUN_COMPLIANCE_TESTS", "true") == "false" and not os.environ.get(
+    if os.environ.get("RUN_SYSTEM_TESTS", "true") == "false" and not os.environ.get(
+        "SPANNER_EMULATOR_HOST", ""
+    ):
+        session.skip("RUN_COMPLIANCE_TESTS is set to false, skipping")
+        session.skip("RUN_SYSTEM_TESTS is set to false, skipping")
+
+    if test_type == "system" and session.python not in SYSTEM_TEST_PYTHON_VERSIONS:
+        session.skip("Standard system tests configured to run exclusively on 3.12")
+@@ -535,6 +535,16 @@ def system(session, test_type):
+            )
+
+
+@nox.session(python=SYSTEM_COMPLIANCE_MIGRATION_TEST_PYTHON_VERSIONS)
+@nox.parametrize(
+    "test_type",
+    ["compliance_14", "compliance_20"],
+)
+def compliance(session, test_type):
+    """Run SQLAlchemy dialect compliance test suite."""
+    system(session, test_type=test_type)
+@nox.session(python=DEFAULT_PYTHON_VERSION)
+def mypy(session):
+    """Run the type checker."""
+0 commit comments
+Comments
+0
+ (0)
+Comment
+You're not receiving notifications from this thread.
