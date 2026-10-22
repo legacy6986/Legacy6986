@@ -1,0 +1,72 @@
+trixie292206021957
+Repository navigation
+Code
+Issues
+2
+ (2)
+Pull requests
+1
+ (1)
+Discussions
+trixie292206021957/gemini
+/librarian.yaml
+rickyplambert-seed
+rickyplambert-seed
+3 days ago
+52 lines (52 loc) · 1.88 KB
+
+Code
+
+Blame
+Large diffs are not rendered by default.
+‎packages/bigframes/.repo-metadata.json‎
+Original file line number	Diff line number	Diff line change
+@@ -4,7 +4,6 @@
+    "language": "python",
+    "library_type": "INTEGRATION",
+    "name": "bigframes",
+    "name_pretty": "A unified Python API in BigQuery",
+    "release_level": "stable",
+    "repo": "googleapis/google-cloud-python"
+}
+‎packages/bigquery-magics/.repo-metadata.json‎
+Original file line number	Diff line number	Diff line change
+@@ -4,7 +4,6 @@
+    "language": "python",
+    "library_type": "INTEGRATION",
+    "name": "bigquery-magics",
+    "name_pretty": "Google BigQuery connector for Jupyter and IPython",
+    "release_level": "preview",
+    "repo": "googleapis/google-cloud-python"
+}
+‎packages/db-dtypes/.repo-metadata.json‎
+Original file line number	Diff line number	Diff line change
+@@ -4,7 +4,6 @@
+    "language": "python",
+    "library_type": "INTEGRATION",
+    "name": "db-dtypes",
+    "name_pretty": "Pandas Data Types for SQL systems (BigQuery, Spanner)",
+    "release_level": "stable",
+    "repo": "googleapis/google-cloud-python"
+}
+‎packages/gcp-sphinx-docfx-yaml/.repo-metadata.json‎
+Original file line number	Diff line number	Diff line change
+@@ -4,7 +4,6 @@
+    "language": "python",
+    "library_type": "OTHER",
+    "name": "gcp-sphinx-docfx-yaml",
+    "name_pretty": "Sphinx DocFX YAML Generator",
+    "release_level": "stable",
+    "repo": "googleapis/google-cloud-python"
+}
+‎packages/google-ads-datamanager/.repo-metadata.json‎
+Original file line number	Diff line number	Diff line change
+@@ -9,7 +9,7 @@
+    "language": "python",
+    "library_type": "GAPIC_AUTO",
+    "name": "google-ads-datamanager",
+    "name_pretty": "Data Manager API",
+    "name_pretty": "Data Manager",
+    "product_documentation": "https://developers.google.com/data-manager",
+    "release_level": "preview",
+    "repo": "googleapis/google-cloud-python"
