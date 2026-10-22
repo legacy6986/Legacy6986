@@ -1,0 +1,885 @@
+Skip to content
+code Search Results · .gemini_
+Filter:
+731k files
+Files with identical content are grouped together. 
+
+
+scottmsilver/treddy · README.md
+```bash
+make deploy        # cross-build → rsync → restart all 4 services
+make deploy-key    # one-time per device: push your ./.gemini_key (a secret;
+                   #   never rsync'd by a normal deploy)
+make image         # OR: bake a flashable .img with everything pre-installed
+```
+
+
+ntphiep/ai-video-studio · README.md
+## Điều kiện chạy
+Bắt buộc: Python 3.9 trở lên, `ffmpeg` và `ffprobe` trong PATH, và một khoá
+Gemini API đặt ở biến môi trường `GEMINI_API_KEY` hoặc file `~/.gemini_key`.
+Tuỳ chọn: `node` cùng `npx` nếu muốn đi đường Remotion, `yt-dlp` nếu muốn tải
+video tham khảo, `curl` để tải file từ URL ký tên của Flow.
+
+
+Vikas-Vastrad/gemini-ai · HELP.md
+# Read Me First
+The following was discovered as part of building this project:
+* The original package name 'com.ai.gemini-ai' is invalid and this project uses 'com.ai.gemini_ai' instead.
+# Getting Started
+
+
+habibahdian/team_app · PLAN.md
+…`POST /chat` route. It is the only place that reads `process.env.GEMINI_API_KEY`, so the key never reaches the browser.
+…(`@google/generative-ai`), model name from `process.env.GEMINI_MODEL` (default in `.env.example`). If no key is set, t…
+
+
+IFIR649/agente-BI · info.md
+# Antes (linea 46):
+model=self.settings.gemini_flash_model,
+# Despues:
+model=self.settings.gemini_lite_model,
+```
+    client = genai.Client(api_key=self.settings.gemini_api_key)
+        self.gemini_client = gemini_client
+            cache_name = self.gemini_client.create_cached_content(
+                model=self.settings.gemini_flash_model,
+        result = self.gemini_client.generate_structured_result(
+            temperature=self.settings.gemini_temperature_intent,
+
+
+Dhruvm23/aetheria-travel-engine · agent.md
+…curity:** Private API credentials must strictly use `process.env.GEMINI_API_KEY` and `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`…
+
+
+dgirard/voice_assistant · SETUP.md
+### Variables d'environnement CI/CD :
+```bash
+# GitHub Actions
+GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+# Firebase App Distribution
+flutter build apk --dart-define=GEMINI_API_KEY=$GEMINI_API_KEY
+
+
+ayushgupta-15/GroundLens · README.md
+uv run python -c "
+from google.genai import Client
+from app.core.config import get_settings
+for m in Client(api_key=get_settings().gemini_api_key).models.list():
+    methods = getattr(m, 'supported_actions', None) or getattr(m, 'supported_generation_methods', None)
+    if methods and 'generateContent' in methods:
+        print(m.name)
+
+
+CarloVelarde/ObfuscatePro · Readme.md
+This utility has an object oriented design. Each model (GPT, GEMINI) has its own class. To set up you can do:
+```python
+from models.gemini_model import GeminiModel
+model = GeminiModel(api_key = GOOGLE_API_KEY, model_name = "gemini-2.0-flash")
+
+
+ortus-boxlang/bx-demos · readme.md
+    messages="why are cats better than dogs?",
+    options={
+        provider:"gemini",
+        apiKey:server.system.environment.GEMINI_API_KEY
+    }
+);
+```
+
+
+hemanthgalam/multi-llm-api-ts · readme.md
+## GeminiProvider Example:
+const geminiConfig = {
+  apiKey: process.env.GEMINI_API_KEY,
+  endpoint: process.env.GEMINI_ENDPOINT,
+  model: process.env.GEMINI_MODEL,
+};
+
+
+brahimcah/VerifyGo · FLUJOS.md
+from backend.nokia_mcp import nokia_nac_session   # módulo general MCP
+from backend.gemini_agent import evaluate          # módulo general Gemini
+```
+from backend.nokia_mcp import nokia_nac_session
+from backend.gemini_agent import evaluate
+from backend.gemini_agent import evaluate
+from backend.gemini_agent import evaluate
+from backend.gemini_agent import evaluate
+from backend.gemini_agent import evaluate
+from backend.gemini_agent import evaluate
+from backend.gemini_agent import evaluate
+Show 3 more matches
+
+
+porfiriovitin/Maestro · readme.md
+{
+    Model = GeminiModel.Gemini_2_5_Flash,
+    SystemPrompt = "Você é um assistente útil e amigável.",
+{
+    Model = GeminiModel.Gemini_2_5_Flash,
+    SystemPrompt = "Você é um assistente útil e amigável.",
+    Model = GeminiModel.Gemini_2_5_Pro,
+    Model = GeminiModel.Gemini_2_5_Flash,
+    Model = GeminiModel.Gemini_2_5_Flash,
+    Model = GeminiModel.Gemini_2_5_Flash,
+    Model = GeminiModel.Gemini_3_Pro,
+
+
+GarimaK1/ai-api-explorer · Readme.md
+  OR
+- const ai = new GoogleGenAI({ apiKey: "YOUR_API_KEY" });
+- const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY or process.env.GOOGLE_API_KEY });
+## OpenRouter
+
+
+Zelitte/plainkit · readme.md
+|---|---|
+| `@netlify/blobs` | Cloudflare KV (`LIMITS_KV`) |
+| `x-nf-client-connection-ip` | `CF-Connecting-IP` |
+| `process.env.GEMINI_API_KEY` | `env.GEMINI_API_KEY` (cez context) |
+| `export default async (req)` | `export async function onRequestPost(context)` |
+| `netlify/functions/translate.js` | `functions/api/translate.js` |
+| `netlify.toml` headers | `_headers` súbor |
+
+
+Sazzad14802/Multimodal-Mcq-Generator · README.md
+…r Gemini API key is stored locally on your machine in `.gemini_config.json` (gitignored). It is **never** included in …
+4. The key is securely saved locally in `.gemini_config.json` and remembered across sessions.
+├── .gemini_config.json         # Local API key & model storage (gitignored)
+
+
+callmejustdodo/DoorGemini · GCP.md
+# Initialize client
+client = genai.Client(api_key=settings.GEMINI_API_KEY)
+          secret_key_ref {
+            secret  = google_secret_manager_secret.gemini_api_key.secret_id
+            version = "latest"
+  secret      = google_secret_manager_secret.gemini_api_key.id
+  secret_data = var.gemini_api_key
+
+
+tanyagoogle/elevate-hr-policy-agent · LAB.md
+…uild an ADK LlmAgent named hr_policy_agent using config.GEMINI_MODEL, POLICY_AGENT_PROMPT, and select_tools(config.RET…
+
+
+salomonerobert/elevate-hr-policy-agent · LAB.md
+
+
+ramneekkh/projectel · LAB.md
+
+
+heyrapto/yt-agent · guide.md
+async function main() {
+   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+async function main() {
+   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+
+daytona/vibekit · LLM.md
+  .withAgent({
+    type: 'gemini',
+    provider: 'google',
+    apiKey: process.env.GEMINI_API_KEY,
+    model: 'gemini-2.5-pro'
+  })
+  .withSandbox(e2bProvider);
+
+
+joedanz/vibekit · LLM.md
+Skip to content
+code Search Results · .gemini_
+Filter:
+731k files
+Files with identical content are grouped together. 
+
+
+mukhokironmoy/Crispit_2.0 · dump.txt
+from app.services.youtube_data import *
+from app.services.gemini_notes import get_notes
+from app.services.transcriptor import *
+from app.services.youtube_data import *
+from app.services.gemini_notes import get_notes
+
+
+Ousmane168/b_testing · New.txt
+class GeminiAnalysisService {
+  constructor() {
+    this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    this.model = this.genAI.getGenerativeModel({ model: "gemini-pro" });
+    this.requestCount = 0;
+    this.maxDailyRequests = 50; // Conservative limit for free tier
+
+
+Mitty530/B_Testing · New.txt
+
+
+saeidkhezri/DadRas-AI-Platform · body.txt
+…y = if (adminGeminiKey.isNotBlank()) adminGeminiKey else try { BuildConfig.GEMINI_API_KEY } catch (e: Exception) { "" }
+…dras.legalapp.network.AiOrchestrator.adminGeminiKey else try { BuildConfig.GEMINI_API_KEY } catch (e: Exception) { "" }
+
+
+VinaySiddha/Chatbot-geminiV3 · code.txt
+let pythonRagUrl = process.env.PYTHON_RAG_SERVICE_URL || ''; // Use environment variable if set
+let geminiApiKey = process.env.GEMINI_API_KEY || ''; // MUST be set via environment
+<<<<<<< HEAD
+// const API_KEY = process.env.GEMINI_API_KEY;
+    const API_KEY = "AIzaSyC-qa1FWlOxmD6i8aLxd6-PZxIOmbzF7ks"
+const API_KEY = process.env.GEMINI_API_KEY;
+const MODEL_NAME = "gemini-1.5-flash"; // Or read from env: process.env.GEMINI_MODEL_NAME || "gemini-1.5-flash";
+
+
+NanthaKumar-cloud/aivari · PLAN.txt
+  Code pattern (providers.py):
+    import google.generativeai as genai
+    genai.configure(api_key=settings.GEMINI_API_KEY)
+    model = genai.GenerativeModel("gemini-2.5-flash")
+    response = model.generate_content(prompt)
+    cypher = response.text.strip()
+
+
+irizigit/bot · boot.txt
+const IMAGES_ARCHIVE_GROUP = '120363400468776166@g.us';
+const OWNER_ID = '212621957775@c.us';
+const PROTECTION_PASSWORD = process.env.BOT_PASSWORD || 'your_secure_password';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'YOUR_GEMINI_API_KEY';
+
+let lecturesMetadata = [];
+const lecturesDir = './lectures/';
+
+
+Tommy0Storm/BUA-XI · colab.txt
+export function getApiKey(): string {
+  const key =
+    import.meta.env.VITE_GEMINI_API_KEY ||
+    process.env.GEMINI_API_KEY ||
+    process.env.GOOGLE_API_KEY;
+  if (!key) throw new Error("Missing Gemini API key");
+
+
+TheSeanLavery/ai-inventory-management · LLMs.txt
+console.log(`SQLite database initialized at ${DB_FILE_PATH}`);
+// --- Gemini AI Setup ---
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+let genAI, geminiModel;
+// Define tools for Gemini
+
+
+Slopsie23/Rune-Deck-Companion · full.txt
+125:
+126:let ai: GoogleGenAI | null = null;
+127:try {
+128:  const apiKey = process.env.GEMINI_API_KEY;
+129:  if (apiKey) {
+130:    ai = new GoogleGenAI({ apiKey });
+131:  } else {
+
+
+amitava121/Lexi-Core · CONFIG.md
+2. For production, consider using environment variables:
+   ```javascript
+   const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'your-fallback-key';
+   ```
+## API Rate Limits
+
+
+mr-dumpling/L05_Trunk · r8111.txt
++     * @return true if the device has 2 or more slots
++     */
++    public static boolean isSupportGemini() {
++        //return PhoneConstants.GEMINI_SIM_NUM >= 2;
++        return true;
++    }
++
+
+
+loukaspastras/gemini_subs · README.md
+| `--slicer-max-sil-kept` | `500` | Silence kept at chunk edges (ms) |
+| `--language-hint` | `auto` | Spoken language hint (or `auto`) |
+| `--cache-dir` | (none) | Cache transcriptions → resume/retry cheaply |
+| `--work-dir` | `.gemini_srt_work` | Intermediate PCM location |
+Run `python gemini_srt.py --help` for the full list.
+
+
+Ali-Cheikh/nosey-agent · setup.md
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+  env:
+    GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+
+
+joelbarmettlerUZH/vue-mcp · plan.md
+**Lines 351-354.** `if not settings.gemini_api_key: skip enrichment`.
+
+
+leo-wang-deepreach/EgoAnno-VLM-Egocentric-Video-Labelling · CLAUDE.md
+- **API keys:** `read_key` looks in **this dir first, then the parent workspace dir** for
+  `.gemini_key`, `.openai_key`, `.anthropic_key`. They live in `/home/ubuntu/local`.
+- **Handpose model:** `../yolo_hands/yolo_bundle/hand_yolo_detector@20260314.pt`, loaded via the
+  changes.
+- **NEVER commit** secrets (`.gemini_key` / `.openai_key` / `.anthropic_key`), run logs, videos,
+  generated images, or held-out ground truth. `.gitignore` enforces this; still scan staged
+
+
+aegisfleet/voicevox2video · README.md
+   echo "your_gemini_api_key" > .gemini_api_key
+   注意: `.gemini_api_key` ファイルは `.gitignore` に追加されているため、Git の追跡対象外となります。
+
+
+tmawada/Embedding-Adaptation · README.md
+python3 comparison/report.py        # final tables (formal vs informal, nDCG gap)
+```
+The LLM baseline needs a Google AI Studio key in `~/.gemini_api_key`:
+```bash
+python3 llm_rewrite/normalize.py --split test --model gemini-3.5-flash-lite --batch_size 40
+
+
+maitray-agrawal/MedScribeAI · rules.md
+…- All secrets must be loaded via environment variables (`process.env.GEMINI_API_KEY`) and documented in `.env.example`.
+
+
+Med-Wajdi-Atoui/elite_auto_ai · main.txt
+            "gemini_queries": "Recherches complexes avec 3+ critères (IA Gemini)",
+            "complexity_threshold": Config.GEMINI_COMPLEXITY_THRESHOLD
+        },
+        self.router = SmartRouter()
+        self.gemini = GeminiManager(Config.GEMINI_API_KEY)
+        self.agent = OptimizedAIAgent(self.gemini, self.db)
+            print(f"   • Seuil complexité: {Config.GEMINI_COMPLEXITY_THRESHOLD} critères")
+                    'complexity_threshold': Config.GEMINI_COMPLEXITY_THRESHOLD,
+        if complexity_score <= Config.GEMINI_COMPLEXITY_THRESHOLD:
+        self.gemini_search_count = 0
+        self.gemini_search_count += 1
+        print(f"🧠 Recherche Gemini #{self.gemini_search_count} - {processing_time:.3f}s")
+Show 2 more matches
+
+
+keiichimochi/axlab · dev.md
+### AI接続問題の修正
+- 本番環境でのGemini API接続エラーを解決
+- `vite.config.ts`でGitHub Actionsの環境変数を優先的に使用するよう修正
+- ビルド時の環境変数処理を改善（`process.env.GEMINI_API_KEY || env.GEMINI_API_KEY`）
+- ローカル開発環境と本番環境の両方で正常に動作するよう調整
+### 背景動画の位置調整
+Skip to content
+code Search Results · .gemini_
+Filter:
+731k files
+Files with identical content are grouped together. 
+
+
+DaebangStn/tts-editor · README.md
+Use one of:
+- `.gemini_api_key` in the working directory
+- `GEMINI_API_KEY` environment variable
+- Project tab API key field
+
+
+Brizuu/asystent-studenta · README.md
+- Jeden plik, bez instalacji — okno aplikacji (WebView2, wbudowany w Windows 10/11).
+- Dane: `%APPDATA%\Asystent` (baza `asystent.db`, `uploads/`, klucz `.gemini_key`).
+- **Eksport danych** (pasek menu, na dole) zapisuje kopię ZIP do folderu *Pobrane*;
+  tryb **przez zwykły czat** (Gemini/ChatGPT w przeglądarce, kopiuj–wklej) dla notatek AI.
+  Nadal działa też plik `.gemini_key` i zmienna `GEMINI_API_KEY`.
+- **Spotify:** utwórz darmową aplikację na developer.spotify.com, a w jej ustawieniach
+- Pliki `.gemini_key`, `asystent.db` i katalog `uploads/` są celowo pominięte w repo
+
+
+neptunebachelor/aiedit · AGENTS.md
+**No ad-hoc directories in the repo root or CWD:**
+- `tmp_*/`, `temp_*/`, `*_tmp/`, `tmpo*/`
+- `inference_tmp/`, `tmp_batch_infer/`, `tmp_verify*/`, `temp_visualize/`
+- `.gemini_temp_bulk/`, `.gemini_temp_pack/`, `.gemini_temp_*/`
+- `.ride-video-infer-tmp/`, `.ride-video-infer-test/`, `.ride-video-infer-*/`
+- `.codex_backlog*/`
+- `infer_calib_*/`
+- [ ] No `tmp_`, `temp_`, `.gemini_temp_`, `.ride-video-infer-` style directories under repo root or CWD
+
+
+ArleyS23/Barcelona-Fc · README.md
+## Ejecutar
+1. Sirve el proyecto con cualquier servidor estatico (Live Server, `python -m http.server`, etc.).
+2. Copia `.env.example` a `.env` y define `GEMINI_API_KEY`.
+3. Si tu flujo usa inyeccion global, expone `window.__ENV__.GEMINI_API_KEY`.
+## Estructura
+- `css/`: design tokens, layout y componentes.
+
+
+TomMLe/gke-hackathon · logs.txt
+…adk.models.google_llm:Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+…adk.models.google_llm:Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+…adk.models.google_llm:Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+…adk.models.google_llm:Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+…adk.models.google_llm:Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+…adk.models.google_llm:Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+…adk.models.google_llm:Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+…adk.models.google_llm:Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+
+
+GedeonNzemba/PDF-chat · note.txt
+2026-05-01 23:27:56,062 - app.services.gemini_service - INFO - Gemini response: 2023 chars
+2026-05-01 23:28:04,458 - app.services.gemini_service - INFO - Gemini response: 3 chars
+2026-05-01 23:28:06,096 - app.services.gemini_service - INFO - Gemini response: 710 chars
+2026-05-01 23:28:10,409 - app.services.gemini_service - INFO - Gemini response: 2806 chars
+
+
+playboi-tiger/expert-computing-machine · api.txt
+      return c.json({ error: 'Missing required fields' }, 400)
+    }
+    const apiKey = c.env.GEMINI_API_KEY
+    if (!apiKey) {
+      console.error('GEMINI_API_KEY is not set')
+      return c.json({ error: 'Server configuration error' }, 500)
+
+
+fkesheh/any-llm · readme.md
+     {
+       model: ChatModels.Google.GEMINI_1_0_PRO,
+       max_tokens: 4096,
+     {
+       model: ChatModels.Google.GEMINI_1_0_PRO,
+       max_tokens: 4096,
+
+
+Sidrandhir/Nexus-AI · x.txt
+  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY || "";
+  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY || "";
+  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY || "";
+
+
+ninjaeon/Zen-Tidy-Downloads · WARP.md
+    - Gemini: extensions.downloads.gemini_enabled, extensions.downloads.gemini_api_key, extensions.downloads.gemini_mod…
+
+
+weimeilin79/agentverse-dataengineer · setup.md
+  gcs-connection
+  CREATE OR REPLACE MODEL bestiary_data.gemini_pro_model
+  REMOTE WITH CONNECTION `atomic-legacy-467221-f7.us-central1.gcs-connection`
+  OPTIONS (endpoint = 'gemini-2.5-flash');
+
+
+pereraai/forked-agentverse-dataengineer · setup.md
+
+
+hamza-paracha/google-agentverse-dataengineer · setup.md
+
+
+salmonco/agentverse-dataengineer · setup.md
+
+
+Dinujaya-Sandaruwan/Auto-generate-images-with-Gemini · README.md
+Your session is stored in a local `.gemini_session_profile` folder. You do not need to log in again unless the session …
+> **Note:** The session is tied to your machine. Do not share the `.gemini_session_profile` folder with anyone.
+This deletes the `.gemini_session_profile` folder. You will need to run `login` again before generating images.
+| `session_dir` | `str` | `".gemini_session"` | Folder used to store session cookies |
+
+
+pihu26112005/autonomousAppBuilder · ex.txt
+const AGENT_AI_URL = "https://api-lr.agent.ai/v1/action/invoke_llm";
+const AGENT_AI_TOKEN = process.env.AGENT_AI_TOKEN; // Store your API key in .env.local
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!); // Store API key in .env.local
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+export async function POST(req: NextRequest) {
+
+
+Harsha-RVCEIAN/agri_rag · temp.txt
+        embedder=embedder
+    )
+    app.state.gemini_llm = LLMClient(provider="gemini")
+    app.state.translator = Translator(provider="gemini")
+    print("✅ Agri-RAG API ready (Text + Voice)")
+
+
+playboi-tiger/expert-computing-machine · web.txt
+      },
+      plugins: [react()],
+      define: {
+        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+      },
+      resolve: {
+
+
+sanjabh11/waveiq-insight-engine · prd.txt
+    private model: any;
+    constructor() {
+        this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+        this.model = this.genAI.getGenerativeModel({ 
+            model: "gemini-2.5-pro-latest",
+            generationConfig: {
+
+
+Ddiidev/sdk_gemini · README.md
+    // Send a simple prompt
+    response := sdk.send_prompt(
+        .gemini_3_0_flash_preview,
+        'Tell me about João Pessoa, Paraíba',
+        'You are a tour guide from Brazil, specifically from the Northeast region, João Pessoa and Paraíba state'
+    ) or {
+
+
+BenitoEck/sdk_gemini · README.md
+
+
+Harshit-Dhundale/Oriel · str.txt
+    if _genai_model is None:
+        genai.configure(api_key=settings.GEMINI_API_KEY)
+        _genai_model = genai.GenerativeModel(settings.LLM_MODEL)
+    if _genai_model is None:
+        genai.configure(api_key=settings.GEMINI_API_KEY)
+        _genai_model = genai.GenerativeModel(settings.LLM_MODEL)
+
+
+suyash242004/AI-DSA-Coach · code.txt
+from agents.evaluation_agent import EvaluationAgent
+from agents.persona_agent import PersonaAgent
+from agents.orchestrator import AgentOrchestrator
+from utils.gemini_client import get_gemini_model
+from datetime import datetime, timedelta, date
+
+
+saptarshibhosale604/DataTransfer · data.txt
+-- export GEMINI_API_KEY=AIzaSyBwIrjcMjKA1 V3XJ_hCLurJx33wh33NWdk
+vim.env.GEMINI_API_KEY = "AIzaSyBwIrjc MjKA1V3XJ_hCLurJx33wh33NWdk"
+vim.env.TAVILY_API_KEY = "tvly-kX76LCzC36 oih0u9COcf6oa53A47MX0g"
+ 
+Skip to content
+code Search Results · .gemini_
+Filter:
+731k files
+Files with identical content are grouped together. 
+
+
+simonettijv/aula_ia2 · chat.txt
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+// 1. Configuração da API com a sua chave
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+async function executar() {
+  // 2. Definindo o modelo 
+
+
+atharvvvg/ScrapeSense · tasks.md
+        def get_llm_suggestion(prompt: str) -> Optional[str]:
+            if not settings.GEMINI_API_KEY:
+                print("Error: GEMINI_API_KEY not configured.")
+                genai.configure(api_key=settings.GEMINI_API_KEY)
+        from .prompt_templates import get_selector_suggestion_prompt
+        from .gemini_client import get_llm_suggestion
+
+
+Bhuvantej123/VisionForge · TASKS.md
+```python
+from .gemini_client import call_gemini
+```python
+from .gemini_client import call_gemini
+
+
+johnathan-greenaway/cli-FSD · pvp.txt
+47 |           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+17 |     if (!process.env.GEMINI_API_KEY) {
+70 |   env.GEMINI_CLI_NO_RELAUNCH = 'true';
+
+
+JiwaniZakir/abundantevalwebapp · idea.md
+… `[environment].storage_mb = 10240`. `[environment.env].GEMINI_CLI_TRUST_WORKSPACE = "true"` is required for the gemin…
+
+
+caloloc2/maestria_big_data · fases.md
+- [x] Sin secretos en git (`.env`, `.gemini_key`, `.venv`, `data/` en `.gitignore`).
+
+
+Midnight145/Archmage-Xillith · COGS.txt
+modules.errorhandler
+jishaku
+modules.report
+modules.warnings
+modules.modmail
+modules.gemini
+modules.gemini_unfiltered
+
+
+tab4moji/mymemo · gemini.md
+最大の目的は「ユーザーに記録の指示を意識させないこと」。会話の文脈から仕様決定、タスク完了、アーキテクチャの変更を自動で検知し、自発的かつ継続的にプロジェクト状態を `.gemini_works/` に永続化せよ。
+## 2. ディレクトリ構造 (.gemini_works/)
+会話の最初のターンでは、必ず `.gemini_works/LATEST_STATE.md` の内容を読み込み、現在の前提条件を把握した上で応答を開始すること。
+
+
+ay4ssin/ai-pet-support-bot · notes.txt
+  
+  const apiKey = process.env.GEMINI_API_KEY;
+  const genAI = new GoogleGenerativeAI(apiKey);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+
+LanceKitL/what-to-watch · asd.txt
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
+// Priority List: Best Quality -> Fastest/Cheapest -> Old Reliable
+const MODEL_CASCADE = [
+
+
+davealone69-gif/APk-online-auto · debug.txt
+  try {
+    const { logs, projectTree, knowledgeBase } = req.body;
+    
+    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === "MY_GEMINI_API_KEY") {
+      return res.status(400).json({ error: "Gemini API Key missing for auto-repair." });
+    }
+
+
+abutun/claude-skill-aso-cosmicmeta-ss · SKILL.md
+   - **API key**: Gemini API key for authentication (required)
+     - Can be provided directly, via `GEMINI_API_KEY` environment variable, or saved to `.gemini_config.json`
+     - To save the key for future use: `python3 gemini_enhance.py --save-key "YOUR_KEY"`
+2. `GEMINI_API_KEY` environment variable
+3. `.gemini_config.json` file (saved via `--save-key`)
+
+
+KALPESHHHHHH/Outfit_Analyzer · a.md
+from .models import OutfitUpload, OutfitRecommendation
+from .serializers import OutfitUploadSerializer, OutfitRecommendationSerializer
+from .forms import OutfitUploadForm
+from .gemini_ai import analyze_outfit
+import os
+import json
+
+
+yesaryann/RAG-implementation · RAG.TXT
+const embeddings = new GoogleGenerativeAIEmbeddings({
+    apiKey: process.env.GEMINI_API_KEY,
+    model: 'text-embedding-004',
+const embeddings = new GoogleGenerativeAIEmbeddings({
+    apiKey: process.env.GEMINI_API_KEY,
+    model: 'text-embedding-004',
+    apiKey: process.env.GEMINI_API_KEY,
+    apiKey: process.env.GEMINI_API_KEY,
+
+
+vaibhavtamang12/newsletter · text.txt
+      - name: 🔐 Create Environment Configuration
+        run: |
+          cat << EOF > .env
+          GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL=gemini-1.5-flash
+          GMAIL_USER=${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD=${{ secrets.GMAIL_APP_PASSWORD }}
+
+
+singularity-htmagarh/newsletter · text.txt
+
+
+Davidasx/gemini-chat · README.md
+   ADMIN_PASSWORD=your_secure_password
+   ```
+4. Create a file at `~/.gemini_chat_keys` containing your Gemini API key(s), one per line.
+5. Run the application:
+   ```
+
+
+Bilal-Ahmad6/Rihayish-RAG · z.txt
+    args = parser.parse_args()
+    # Fallback: if Gemini key not passed explicitly, pull from env (supports both legacy & new names)
+    if not args.gemini_api_key:
+        args.gemini_api_key = (
+            os.getenv("GRAANA_GEMINI_API_KEY")
+            or os.getenv("GEMINI_API_KEY")
+        if not args.gemini_api_key:
+        elif args.llm_engine == "gemini" and args.gemini_api_key:
+            return call_llm_gemini(prompt, args.gemini_model, args.gemini_api_key)
+                    if args.llm_engine == "gemini" and args.gemini_api_key:
+…                 answer_text = call_llm_gemini(analysis_prompt, args.gemini_analytical_model, args.gemini_api_key, 512)
+            elif args.llm_engine == "gemini" and args.gemini_api_key:
+                answer_text = call_llm_gemini(prompt, args.gemini_model, args.gemini_api_key)
+
+
+mm24b047-beep/cricket-prediction · temp.txt
+  return {
+    plugins: [react(), tailwindcss(), iplLiveScoreProxyPlugin()],
+    define: {
+      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+    },
+    resolve: {
+      alias: {
+
+
+d-kuro/geminiwebtools · README.md
+    ctx := context.Background()
+    
+    // Create client with custom configuration
+    store, err := storage.NewFileSystemStore(".gemini_credentials")
+    if err != nil {
+        log.Fatal(err)
+    }
+
+
+qutek/gemini-web-api · README.md
+…es (`sessions.json`) into isolated subdirectories named after the account's email/identifier under `~/.gemini_webapi/`.
+
+
+rawrock696915-glitch/gemini-web-api · README.md
+Skip to content
+code Search Results · .gemini_
+Filter:
+731k files
+Files with identical content are grouped together. 
+
+
+ramonclaudio/gemini-ai-toolkit · README.md
+## Caching
+URL-downloaded files cache to `.gemini_ai_toolkit_cache` and clear on session end.
+## Errors
+
+
+haotongl/gemini-image-skill · SKILL.md
+```bash
+python3 "$SCRIPT" chat_new --session .gemini_chat_session.pkl
+```
+```bash
+python3 "$SCRIPT" chat_send "修改指令" --session .gemini_chat_session.pkl --output v2.png
+python3 "$SCRIPT" chat_send "继续修改" --input another.png --session .gemini_chat_session.pkl --output v3.png
+- `--session`: 会话文件 (默认 .gemini_chat_session.pkl，不存在则自动创建)
+
+
+googa27/finite_difference_options · QWEN.md
+- All failures to pass tests should be registered in '.gemini_project'.
+… tasks, decisions, and long-term memory, refer to the `.gemini_project/` directory at the project root. This directory…
+- **Task Management:** All active tasks are managed via the `project_tasks.sqlite` database within `.gemini_project/`.
+…arch for project history and code context should utilize the vector store located in `.gemini_project/project_memory/`.
+…Instructions:** For detailed guidance on project setup and context recovery, consult `.gemini_project/INSTRUCTIONS.md`.
+
+
+Qing-LAB/pylabhub · GEMINI.md
+    1. Write the complete message to `.gemini_commit_message.txt`.
+    2. Execute: `git commit -F .gemini_commit_message.txt`.
+    3. Execute: `rm .gemini_commit_message.txt` upon success.
+
+
+yiwei79/context-sieve · TODO.md
+- [x] Add tests for Codex/OpenCode-compatible context targets.
+- [x] Add tests for legacy Gemini log/context adapter behavior.
+- [x] Refactor `src/sieve/index.ts` to select log sources from config instead of hardcoding `.gemini/logs/`.
+- [x] Refactor `src/sieve/injector.ts` to hydrate configurable targets instead of defaulting to `.gemini_context`.
+- [x] Update README and user guide after adapter behavior is implemented.
+- [x] Add CLI/config ergonomics for selecting default vs legacy profiles.
+- [x] Add deterministic product harness for context-governance scenarios.
+
+
+motosan-dev/motosan-ai · llms.txt
+…; Python v0.10.0 `GeminiCodeAssistProvider` / `Provider.gemini_code_assist`) — HTTP client for `cloudcode-pa.googleapi…
+…ovider` via `.claude_code(...)` / `.codex_cli(...)` / `.gemini_cli(...)`. `ClaudeCode` and `CodexCli` landed in v0.11.…
+    .gemini_code_assist_project_id("your-gcp-project-id")
+    .gemini_cli(
+
+
+lechat/dotfiles · AGENTS.md
+- `nvim` - Uses custom `VIMRUNTIME=/usr/local/share/nvim/runtime`
+- `docker` - Wrapped with `sudo`
+- `claude` - Points to `/home/aleksey/.claude/local/claude`
+- Shell loads secrets from `~/.anthropic_api_key`, `~/.gemini_api_key`, `~/.gpg-agent-info`
+## Setup Requirements
+
+
+raphael-seo/Versatile-OCR-Program · usage.md
+| `ocr.pdf_dpi` | `200` | DPI used when rasterizing PDF pages with `pdf2image`. |
+| `ocr.iou_threshold` | `0.5` | IoU threshold for merging duplicate same-type regions. |
+| `ocr.image_processing.vision_max_dim` | `1600` | Max image dimension before calling Google Vision. |
+| `ocr.image_processing.gemini_max_dim` | `1024` | Max image dimension before calling Gemini. |
+| `ocr.image_processing.jpeg_quality` | `85` | JPEG re-encoding quality before API calls. |
+### Models
+
+
+hytrex/Versatile-OCR-Program · usage.md
+
+
+luqman-v1/agx-cli-manager · PRD.md
+- **Profile Storage:** Stores config profiles under `$HOME/.gemini_profiles/` (e.g. `acc1`, `acc2`, `acc3`).
+  - **macOS & Linux:** Standard Unix POSIX symlink pointing `$HOME/.gemini` -> `$HOME/.gemini_profiles/<active_acc>`.
+
+
+kryoton98/buy-or-wait · log.txt
+## [2026-09-13T02:27:53+00:00] LLM audit triaged 55/32/7; household-income fix proposed; usage report
+User Prompt (verbatim, secrets redacted):
+I created ~/.gemini_key and ran `python3 code/main.py --llm off --llm-audit` myself:
+215 calls, 121 agree / 94 disagree, 0 without a reading, output.csv unchanged
+(byte-identical to v3). Time-box 30 minutes.
+
+
+OpenFPT/wikipedia-neo4j · CLAUDE.md
+- **Gemini keys** are stored in a plaintext file (default `.gemini_key.txt`), one key per line, for rotation
+
+
+penguinwokrs/LunaGen · AGENT.md
+  APIキーは `~/.gemini_api_key`。4欄×3テイストを生成し、自動チェック（400字/嗜好保全/禁止表現/Markdown混入）+LLM審査（書き分け/捏造/同意表現）を実施。
+
+
+rootkit-original/WindowsPowerShell · API.md
+config = ApplicationConfig()
+# Access configuration
+gemini_key = config.get_ai_config().gemini_api_key
+telegram_token = config.get_telegram_config().bot_token
+# Environment detection
+
+
+Delegasi-Tech/delreact-agent · llm.txt
+const agent = new ReactAgentBuilder({
+  geminiKey: process.env.GEMINI_KEY,
+  openaiKey: process.env.OPENAI_KEY,
+const agent = new ReactAgentBuilder({
+  geminiKey: process.env.GEMINI_KEY
+})
+  geminiKey: process.env.GEMINI_KEY,
+  geminiKey: process.env.GEMINI_KEY
+  geminiKey: process.env.GEMINI_KEY,
+  geminiKey: process.env.GEMINI_KEY,
+  geminiKey: process.env.GEMINI_KEY,
+  geminiKey: process.env.GEMINI_KEY,
+
+
+Risyandi/delreact-agent · llm.txt
+
+
+tusgino/llm-code-reviewer · README.MD
+          # Optional - API keys for different LLM services
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    PRIMARY_MODEL: 'gemini'
+    GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+
+qq332982511/llm-code-reviewer · README.MD
+
+
+vongo97/cerebro · guia.md
+…dores de IA:OPENROUTER_API_KEY (Acceso a modelos :free).GEMINI_API_KEY (Respaldo directo de Google AI Studio).ANTHROPI…
+
+
+fusaku/akb48-summarizer · USAGE.md
+```yaml
+# 设置 Gemini API 密钥路径
+gemini_api_key_file: "/path/to/your/.gemini_api_key"
+# 选择处理模式
+processing:
+
+
+HarshTikone/agent-ops · ADR.md
+four "regression" tests green — while a direct manual check
+(`Settings().gemini_api_key` from `backend/` against the real, fully
+populated root `.env`) returned `''`. The exact bug ADR-006 fixed was fully
+   writes a fake `.env` at `<tmp>/repo/.env`, and runs
+   `from app.config import Settings; print(Settings().gemini_api_key)` in a
+   fresh subprocess with CWD set to the fake `backend/` — mirroring
+
+
+ctrl-gaurav/effGen · NEWS.md
+4. **Gemini Files API** — `effgen.models.gemini_files.upload_file(path)` returns a `FileRef`; pass it in `generate(prom…
+…ol`, `GeminiCodeExecutionTool` in `effgen.tools.builtin.gemini_native`. Use them directly in Agent — they activate Gem…
+
+
+pulkitraj9897/AI-Edu-Administration · diff.txt
+-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
++      const apiKey = (process.env.GEMINI_API_KEY || '').replace(/["']/g, '');
