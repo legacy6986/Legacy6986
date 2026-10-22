@@ -1,0 +1,19 @@
+https://github.com/rickyplambert-seed/trixie292206021957/commit/c6dc739f4c56642062f0f4d718de9a34618f9802
+
+<iframe
+<div id="genmb-app-X9u9e3vfRqYm"></div>
+<script>
+  (function() {
+    var iframe = document.createElement('iframe');
+    iframe.src = 'https://genmb.com/app/X9u9e3vfRqYm';
+    iframe.width = '100%';
+    iframe.height = '600';
+    iframe.frameBorder = '0';
+    iframe.loading = 'lazy';
+    iframe.title = "Sovereign Advanced Intelligence";
+    document.getElementById('genmb-app-X9u9e3vfRqYm').appendChild(iframe);
+  })();
+</script><iframe
+  src="https://sovereign-advanced-intelligenc.genmb.com?embed=true"
+  width="100%"
+  height="600px"
