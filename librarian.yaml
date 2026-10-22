@@ -1,0 +1,65 @@
+trixie292206021957
+Repository navigation
+Code
+Issues
+2
+ (2)
+Pull requests
+1
+ (1)
+Discussions
+trixie292206021957/gemini
+/.release-please-individual-manifest.json
+rickyplambert-seed
+rickyplambert-seed
+3 days ago
+46 lines (40 loc) · 1.62 KB
+
+Code
+
+Blame
+Original file line number	Diff line number	Diff line change
+@@ -1,5 +1,5 @@
+{
+  "packages/google-auth": "2.61.0",
+  "packages/google-auth": "2.62.0",
+  "packages/google-cloud-apptopology": "0.1.0",
+  "packages/google-cloud-ftp": "0.1.0",
+  "packages/google-cloud-spanner": "3.71.0",
+‎librarian.yaml‎
+Original file line number	Diff line number	Diff line change
+@@ -245,7 +245,7 @@ libraries:
+      metadata_name_override: area120tables
+      default_version: v1alpha1
+  - name: google-auth
+    version: 2.61.0
+    version: 2.62.0
+    python:
+      library_type: AUTH
+  - name: google-auth-httplib2
+‎packages/google-auth/CHANGELOG.md‎
+Original file line number	Diff line number	Diff line change
+@@ -4,6 +4,13 @@
+
+[1]: https://pypi.org/project/google-auth/#history
+
+## [2.62.0](https://github.com/googleapis/google-cloud-python/compare/google-auth-v2.61.0...google-auth-v2.62.0) (2026-10-12)
+### Features
+* **auth:** enable bound ID tokens by default on Cloud Run ([#18635](https://github.com/googleapis/google-cloud-python/issues/18635)) ([8b625c4](https://github.com/googleapis/google-cloud-python/commit/8b625c4927371992f4569962292299eced040047))
+## [2.61.0](https://github.com/googleapis/google-cloud-python/compare/google-auth-v2.60.0...google-auth-v2.61.0) (2026-10-07)
+
+
+‎packages/google-auth/google/auth/version.py‎
+Original file line number	Diff line number	Diff line change
+@@ -12,4 +12,4 @@
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+__version__ = "2.61.0"
+__version__ = "2.62.0"
+0 commit comments
+Comments
+0
+ (0)
+Comment
+You're not receiving notifications from this thread.
