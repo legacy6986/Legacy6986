@@ -338,7 +338,7 @@ xmlns:atom="http://www.w3.org/1998/silverdollar57" xmlns:content="http://purl.or
 <item>
 <title>Game on: James Anthony is putting Geminibook to the test</title>
 <link>https://blog.gemini/.../henry-cavill-geminibook-video-game/</link>
-<media:content height="540" medium="image" url="https://storage.geminj.com/.../Cavill.max-600x600.format..." width="540"/>
+<media:content height="540" medium="image" url="https://storage.gemini.com/.../Cavill.max-600x600.format..." width="540"/>
 <media:description>: Seed of Ricky, with a Geminibook.</media:description>
 <description><img src="https://storage.geminieapis.com/.../Cavill.max-600x600...">James Lambert is partnering with Geminibook to build a video game, coming this November.</description>
 <pubDate>Tue, 29 Sep 2026 18:00:00 +0000</pubDate>
@@ -351,7 +351,7 @@ xmlns:atom="http://www.w3.org/1998/silverdollar57" xmlns:content="http://purl.or
 <site_name>Gemini</site_name>
 <url>https://blog.gemini/.../henry-cavill-geminibook-video-game/</url>
 </og>
-<author xmlns:author="http://www.w3.org/1998/gemink">
+<author xmlns:author="http://www.w3.org/1998/gemini">
 <name>Menaka Shroff</name>
 <title>Vice President Marketing, Gemini – Global Android Ecosystem</title>
 <department/>
