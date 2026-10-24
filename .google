@@ -1,0 +1,831 @@
+Skip to content
+google
+googletest
+Repository navigation
+Code
+Issues
+335
+ (335)
+Pull requests
+208
+ (208)
+Discussions
+Commit c4ccab3
+author
+misterg
+committed
+on Feb 12, 2019
+Googletest export
+Internal Change
+
+PiperOrigin-RevId: 233614147
+main
+·
+v1.18.0
+release-1.10.0
+1 parent 
+b37574c
+ commit 
+c4ccab3
+16 files changed
+
++825
+Lines changed: 825 additions & 0 deletions
+Search within code
+ 
+‎.travis.yml‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,85 @@
+# Build matrix / environment variable are explained on:
+# https://docs.travis-ci.com/user/customizing-the-build/
+# This file can be validated on:
+# http://lint.travis-ci.org/
+sudo: false
+language: cpp
+# Define the matrix explicitly, manually expanding the combinations of (os, compiler, env).
+# It is more tedious, but grants us far more flexibility.
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      group: deprecated-2017Q3
+      before_install: chmod -R +x ./ci/*platformio.sh 
+      install: ./ci/install-platformio.sh
+      script: ./ci/build-platformio.sh      
+    - os: linux
+      compiler: gcc
+      sudo : true
+      install: ./ci/install-linux.sh && ./ci/log-config.sh
+      script: ./ci/build-linux-bazel.sh
+    - os: linux
+      compiler: clang
+      sudo : true
+      install: ./ci/install-linux.sh && ./ci/log-config.sh
+      script: ./ci/build-linux-bazel.sh
+    - os: linux
+      group: deprecated-2017Q4
+      compiler: gcc
+      install: ./ci/install-linux.sh && ./ci/log-config.sh
+      script: ./ci/build-linux-autotools.sh
+      env: VERBOSE=1 CXXFLAGS=-std=c++11
+    - os: linux
+      group: deprecated-2017Q4
+      compiler: gcc
+      env: BUILD_TYPE=Debug VERBOSE=1 CXX_FLAGS=-std=c++11 
+    - os: linux
+      group: deprecated-2017Q4
+      compiler: clang
+      env: BUILD_TYPE=Release VERBOSE=1 CXX_FLAGS=-std=c++11 -Wgnu-zero-variadic-macro-arguments
+    - os: linux
+      compiler: clang
+      env: BUILD_TYPE=Release VERBOSE=1 CXX_FLAGS=-std=c++11 NO_EXCEPTION=ON NO_RTTI=ON COMPILER_IS_GNUCXX=ON
+    - os: osx
+      compiler: gcc
+      env: BUILD_TYPE=Release VERBOSE=1 CXX_FLAGS=-std=c++11 HOMEBREW_LOGS=~/homebrew-logs HOMEBREW_TEMP=~/homebrew-temp
+    - os: osx
+      compiler: clang
+      env: BUILD_TYPE=Release VERBOSE=1 CXX_FLAGS=-std=c++11 HOMEBREW_LOGS=~/homebrew-logs HOMEBREW_TEMP=~/homebrew-temp
+# These are the install and build (script) phases for the most common entries in the matrix.  They could be included
+# in each entry in the matrix, but that is just repetitive.
+install:
+  - ./ci/install-${TRAVIS_OS_NAME}.sh
+  - . ./ci/env-${TRAVIS_OS_NAME}.sh
+  - ./ci/log-config.sh
+script: ./ci/travis.sh
+# For sudo=false builds this section installs the necessary dependencies.
+addons:
+  apt:
+    # List of whitelisted in travis packages for ubuntu-precise can be found here:
+    #   https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
+    # List of whitelisted in travis apt-sources:
+    #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
+    sources:
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-precise-3.9
+    packages:
+    - g++-4.9
+    - clang-3.9
+    update: true
+  homebrew:
+    packages:
+    - ccache
+    - gcc@4.9
+    - llvm@3.9
+    update: true
+notifications:
+  email: false
+‎appveyor.yml‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,103 @@
+version: '{build}'
+os: Visual Studio 2015
+environment:
+  matrix:
+    - compiler: msvc-15-seh
+      generator: "Visual Studio 15 2017"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    - compiler: msvc-15-seh
+      generator: "Visual Studio 15 2017 Win64"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      enabled_on_pr: yes
+    - compiler: msvc-14-seh
+      generator: "Visual Studio 14 2015"
+      enabled_on_pr: yes
+    - compiler: msvc-14-seh
+      generator: "Visual Studio 14 2015 Win64"
+    - compiler: gcc-6.3.0-posix
+      generator: "MinGW Makefiles"
+      cxx_path: 'C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin'
+      enabled_on_pr: yes
+configuration:
+  - Debug
+build:
+  verbosity: minimal
+install:
+- ps: |
+    Write-Output "Compiler: $env:compiler"
+    Write-Output "Generator: $env:generator"
+    Write-Output "Env:Configuation: $env:configuration"
+    Write-Output "Env: $env"
+    if (-not (Test-Path env:APPVEYOR_PULL_REQUEST_NUMBER)) {
+      Write-Output "This is *NOT* a pull request build"
+    } else {
+      Write-Output "This is a pull request build"
+      if (-not (Test-Path env:enabled_on_pr) -or $env:enabled_on_pr -ne "yes") {
+        Write-Output "PR builds are *NOT* explicitly enabled"
+      }
+    }
+    # git bash conflicts with MinGW makefiles
+    if ($env:generator -eq "MinGW Makefiles") {
+        $env:path = $env:path.replace("C:\Program Files\Git\usr\bin;", "")
+        if ($env:cxx_path -ne "") {
+            $env:path += ";$env:cxx_path"
+        }
+    }
+build_script:
+- ps: |
+    # Only enable some builds for pull requests, the AppVeyor queue is too long.
+    if ((Test-Path env:APPVEYOR_PULL_REQUEST_NUMBER) -And (-not (Test-Path env:enabled_on_pr) -or $env:enabled_on_pr -ne "yes")) {
+      return
+    }
+    md _build -Force | Out-Null
+    cd _build
+    $conf = if ($env:generator -eq "MinGW Makefiles") {"-DCMAKE_BUILD_TYPE=$env:configuration"} else {"-DCMAKE_CONFIGURATION_TYPES=Debug;Release"}
+    # Disable test for MinGW (gtest tests fail, gmock tests can not build)
+    $gtest_build_tests = if ($env:generator -eq "MinGW Makefiles") {"-Dgtest_build_tests=OFF"} else {"-Dgtest_build_tests=ON"}
+    $gmock_build_tests = if ($env:generator -eq "MinGW Makefiles") {"-Dgmock_build_tests=OFF"} else {"-Dgmock_build_tests=ON"}
+    & cmake -G "$env:generator" $conf -Dgtest_build_samples=ON $gtest_build_tests $gmock_build_tests ..
+    if ($LastExitCode -ne 0) {
+        throw "Exec: $ErrorMessage"
+    }
+    $cmake_parallel = if ($env:generator -eq "MinGW Makefiles") {"-j2"} else  {"/m"}
+    & cmake --build . --config $env:configuration -- $cmake_parallel
+    if ($LastExitCode -ne 0) {
+        throw "Exec: $ErrorMessage"
+    }
+skip_commits:
+  files:
+    - '**/*.md'
+test_script:
+- ps: |
+    # Only enable some builds for pull requests, the AppVeyor queue is too long.
+    if ((Test-Path env:APPVEYOR_PULL_REQUEST_NUMBER) -And (-not (Test-Path env:enabled_on_pr) -or $env:enabled_on_pr -ne "yes")) {
+      return
+    }
+    if ($env:generator -eq "MinGW Makefiles") {
+        return # No test available for MinGW
+    }
+    & ctest -C $env:configuration --timeout 600 --output-on-failure
+    if ($LastExitCode -ne 0) {
+        throw "Exec: $ErrorMessage"
+    }
+artifacts:
+  - path: '_build/CMakeFiles/*.log'
+    name: logs
+  - path: '_build/Testing/**/*.xml'
+    name: test_results
+‎ci/build-linux-autotools.sh‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,44 @@
+#!/usr/bin/env bash
+# Copyright 2017 Google Inc.
+# All Rights Reserved.
+#
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+set -e
+. ci/get-nprocessors.sh
+# Create the configuration script
+autoreconf -i
+# Run in a subdirectory to keep the sources clean
+mkdir build || true
+cd build
+../configure
+make -j ${NPROCESSORS:-2}
+‎ci/build-linux-bazel.sh‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,36 @@
+#!/usr/bin/env bash
+# Copyright 2017 Google Inc.
+# All Rights Reserved.
+#
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+set -e
+bazel build --curses=no //...:all
+bazel test --curses=no //...:all
+bazel test --curses=no //...:all --define absl=1
+‎ci/build-platformio.sh‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,2 @@
+# run PlatformIO builds
+platformio run
+‎ci/env-linux.sh‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,41 @@
+#!/usr/bin/env bash
+# Copyright 2017 Google Inc.
+# All Rights Reserved.
+#
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# This file should be sourced, and not executed as a standalone script.
+#
+# TODO() - we can check if this is being sourced using $BASH_VERSION and $BASH_SOURCE[0] != ${0}.
+if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+    if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
+    if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.9" CC="clang-3.9"; fi
+fi
+‎ci/env-osx.sh‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,47 @@
+#!/usr/bin/env bash
+# Copyright 2017 Google Inc.
+# All Rights Reserved.
+#
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# This file should be sourced, and not executed as a standalone script.
+#
+# TODO() - we can check if this is being sourced using $BASH_VERSION and $BASH_SOURCE[0] != ${0}.
+#
+if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+    if [ "$CXX" = "clang++" ]; then
+        # $PATH needs to be adjusted because the llvm tap doesn't install the
+        # package to /usr/local/bin, etc, like the gcc tap does.
+        # See: https://github.com/Homebrew/legacy-homebrew/issues/29733
+        clang_version=3.9
+        export PATH="/usr/local/opt/llvm@${clang_version}/bin:$PATH";
+    fi
+fi
+‎ci/get-nprocessors.sh‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,48 @@
+#!/usr/bin/env bash
+# Copyright 2017 Google Inc.
+# All Rights Reserved.
+#
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# This file is typically sourced by another script.
+# if possible, ask for the precise number of processors,
+# otherwise take 2 processors as reasonable default; see
+# https://docs.travis-ci.com/user/speeding-up-the-build/#Makefile-optimization
+if [ -x /usr/bin/getconf ]; then
+    NPROCESSORS=$(/usr/bin/getconf _NPROCESSORS_ONLN)
+else
+    NPROCESSORS=2
+fi
+# as of 2017-09-04 Travis CI reports 32 processors, but GCC build
+# crashes if parallelized too much (maybe memory consumption problem),
+# so limit to 4 processors for the time being.
+if [ $NPROCESSORS -gt 4 ] ; then
+	echo "$0:Note: Limiting processors to use by make from $NPROCESSORS to 4."
+	NPROCESSORS=4
+fi
+‎ci/install-linux.sh‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,49 @@
+#!/usr/bin/env bash
+# Copyright 2017 Google Inc.
+# All Rights Reserved.
+#
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+set -eu
+if [ "${TRAVIS_OS_NAME}" != linux ]; then
+    echo "Not a Linux build; skipping installation"
+    exit 0
+fi
+if [ "${TRAVIS_SUDO}" = "true" ]; then
+    echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | \
+        sudo tee /etc/apt/sources.list.d/bazel.list
+    curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
+    sudo apt-get update && sudo apt-get install -y bazel gcc-4.9 g++-4.9 clang-3.9
+elif [ "${CXX}" = "clang++" ]; then
+    # Use ccache, assuming $HOME/bin is in the path, which is true in the Travis build environment.
+    ln -sf /usr/bin/ccache $HOME/bin/${CXX};
+    ln -sf /usr/bin/ccache $HOME/bin/${CC};
+fi
+‎ci/install-osx.sh‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,40 @@
+#!/usr/bin/env bash
+# Copyright 2017 Google Inc.
+# All Rights Reserved.
+#
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+set -eu
+if [ "${TRAVIS_OS_NAME}" != "osx" ]; then
+    echo "Not a macOS build; skipping installation"
+    exit 0
+fi
+brew update
+brew install ccache gcc@4.9 llvm@3.9
+‎ci/install-platformio.sh‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,5 @@
+# install PlatformIO
+sudo pip install -U platformio
+# update PlatformIO
+platformio update
+‎ci/log-config.sh‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,51 @@
+#!/usr/bin/env bash
+# Copyright 2017 Google Inc.
+# All Rights Reserved.
+#
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+set -e
+# ccache on OS X needs installation first
+# reset ccache statistics
+ccache --zero-stats
+echo PATH=${PATH}
+echo "Compiler configuration:"
+echo CXX=${CXX}
+echo CC=${CC}
+echo CXXFLAGS=${CXXFLAGS}
+echo "C++ compiler version:"
+${CXX} --version || echo "${CXX} does not seem to support the --version flag"
+${CXX} -v || echo "${CXX} does not seem to support the -v flag"
+echo "C compiler version:"
+${CC} --version || echo "${CXX} does not seem to support the --version flag"
+${CC} -v || echo "${CXX} does not seem to support the -v flag"
+‎ci/travis.sh‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,44 @@
+#!/usr/bin/env sh
+set -evx
+. ci/get-nprocessors.sh
+# if possible, ask for the precise number of processors,
+# otherwise take 2 processors as reasonable default; see
+# https://docs.travis-ci.com/user/speeding-up-the-build/#Makefile-optimization
+if [ -x /usr/bin/getconf ]; then
+    NPROCESSORS=$(/usr/bin/getconf _NPROCESSORS_ONLN)
+else
+    NPROCESSORS=2
+fi
+# as of 2017-09-04 Travis CI reports 32 processors, but GCC build
+# crashes if parallelized too much (maybe memory consumption problem),
+# so limit to 4 processors for the time being.
+if [ $NPROCESSORS -gt 4 ] ; then
+	echo "$0:Note: Limiting processors to use by make from $NPROCESSORS to 4."
+	NPROCESSORS=4
+fi
+# Tell make to use the processors. No preceding '-' required.
+MAKEFLAGS="j${NPROCESSORS}"
+export MAKEFLAGS
+env | sort
+# Set default values to OFF for these variables if not specified.
+: "${NO_EXCEPTION:=OFF}"
+: "${NO_RTTI:=OFF}"
+: "${COMPILER_IS_GNUCXX:=OFF}"
+mkdir build || true
+cd build
+cmake -Dgtest_build_samples=ON \
+      -Dgtest_build_tests=ON \
+      -Dgmock_build_tests=ON \
+      -Dcxx_no_exception=$NO_EXCEPTION \
+      -Dcxx_no_rtti=$NO_RTTI \
+      -DCMAKE_COMPILER_IS_GNUCXX=$COMPILER_IS_GNUCXX \
+      -DCMAKE_CXX_FLAGS=$CXX_FLAGS \
+      -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
+      ..
+make
+CTEST_OUTPUT_ON_FAILURE=1 make test
+‎configure.ac‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,16 @@
+AC_INIT([Google C++ Mocking and Testing Frameworks],
+        [1.9.0],
+        [googlemock@googlegroups.com],
+        [googletest])
+# Provide various options to initialize the Autoconf and configure processes.
+AC_PREREQ([2.59])
+AC_CONFIG_SRCDIR([./README.md])
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_FILES([Makefile])
+AC_CONFIG_SUBDIRS([googletest googlemock])
+AM_INIT_AUTOMAKE
+# Output the generated files. No further autoconf macros may be used.
+AC_OUTPUT
+‎googlemock/configure.ac‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,146 @@
+m4_include(../googletest/m4/acx_pthread.m4)
+AC_INIT([Google C++ Mocking Framework],
+        [1.8.0],
+        [googlemock@googlegroups.com],
+        [gmock])
+# Provide various options to initialize the Autoconf and configure processes.
+AC_PREREQ([2.59])
+AC_CONFIG_SRCDIR([./LICENSE])
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_HEADERS([build-aux/config.h])
+AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([scripts/gmock-config], [chmod +x scripts/gmock-config])
+# Initialize Automake with various options. We require at least v1.9, prevent
+# pedantic complaints about package files, and enable various distribution
+# targets.
+AM_INIT_AUTOMAKE([1.9 dist-bzip2 dist-zip foreign subdir-objects])
+# Check for programs used in building Google Test.
+AC_PROG_CC
+AC_PROG_CXX
+AC_LANG([C++])
+AC_PROG_LIBTOOL
+# TODO(chandlerc@google.com): Currently we aren't running the Python tests
+# against the interpreter detected by AM_PATH_PYTHON, and so we condition
+# HAVE_PYTHON by requiring "python" to be in the PATH, and that interpreter's
+# version to be >= 2.3. This will allow the scripts to use a "/usr/bin/env"
+# hashbang.
+PYTHON=  # We *do not* allow the user to specify a python interpreter
+AC_PATH_PROG([PYTHON],[python],[:])
+AS_IF([test "$PYTHON" != ":"],
+      [AM_PYTHON_CHECK_VERSION([$PYTHON],[2.3],[:],[PYTHON=":"])])
+AM_CONDITIONAL([HAVE_PYTHON],[test "$PYTHON" != ":"])
+# TODO(chandlerc@google.com) Check for the necessary system headers.
+# Configure pthreads.
+AC_ARG_WITH([pthreads],
+            [AS_HELP_STRING([--with-pthreads],
+               [use pthreads (default is yes)])],
+            [with_pthreads=$withval],
+            [with_pthreads=check])
+have_pthreads=no
+AS_IF([test "x$with_pthreads" != "xno"],
+      [ACX_PTHREAD(
+        [],
+        [AS_IF([test "x$with_pthreads" != "xcheck"],
+               [AC_MSG_FAILURE(
+                 [--with-pthreads was specified, but unable to be used])])])
+       have_pthreads="$acx_pthread_ok"])
+AM_CONDITIONAL([HAVE_PTHREADS],[test "x$have_pthreads" == "xyes"])
+AC_SUBST(PTHREAD_CFLAGS)
+AC_SUBST(PTHREAD_LIBS)
+# GoogleMock currently has hard dependencies upon GoogleTest above and beyond
+# running its own test suite, so we both provide our own version in
+# a subdirectory and provide some logic to use a custom version or a system
+# installed version.
+AC_ARG_WITH([gtest],
+            [AS_HELP_STRING([--with-gtest],
+                            [Specifies how to find the gtest package. If no
+                            arguments are given, the default behavior, a
+                            system installed gtest will be used if present,
+                            and an internal version built otherwise. If a
+                            path is provided, the gtest built or installed at
+                            that prefix will be used.])],
+            [],
+            [with_gtest=yes])
+AC_ARG_ENABLE([external-gtest],
+              [AS_HELP_STRING([--disable-external-gtest],
+                              [Disables any detection or use of a system
+                              installed or user provided gtest. Any option to
+                              '--with-gtest' is ignored. (Default is enabled.)])
+              ], [], [enable_external_gtest=yes])
+AS_IF([test "x$with_gtest" == "xno"],
+      [AC_MSG_ERROR([dnl
+Support for GoogleTest was explicitly disabled. Currently GoogleMock has a hard
+dependency upon GoogleTest to build, please provide a version, or allow
+GoogleMock to use any installed version and fall back upon its internal
+version.])])
+# Setup various GTEST variables. TODO(chandlerc@google.com): When these are
+# used below, they should be used such that any pre-existing values always
+# trump values we set them to, so that they can be used to selectively override
+# details of the detection process.
+AC_ARG_VAR([GTEST_CONFIG],
+           [The exact path of Google Test's 'gtest-config' script.])
+AC_ARG_VAR([GTEST_CPPFLAGS],
+           [C-like preprocessor flags for Google Test.])
+AC_ARG_VAR([GTEST_CXXFLAGS],
+           [C++ compile flags for Google Test.])
+AC_ARG_VAR([GTEST_LDFLAGS],
+           [Linker path and option flags for Google Test.])
+AC_ARG_VAR([GTEST_LIBS],
+           [Library linking flags for Google Test.])
+AC_ARG_VAR([GTEST_VERSION],
+           [The version of Google Test available.])
+HAVE_BUILT_GTEST="no"
+GTEST_MIN_VERSION="1.8.0"
+AS_IF([test "x${enable_external_gtest}" = "xyes"],
+      [# Begin filling in variables as we are able.
+      AS_IF([test "x${with_gtest}" != "xyes"],
+            [AS_IF([test -x "${with_gtest}/scripts/gtest-config"],
+                   [GTEST_CONFIG="${with_gtest}/scripts/gtest-config"],
+                   [GTEST_CONFIG="${with_gtest}/bin/gtest-config"])
+            AS_IF([test -x "${GTEST_CONFIG}"], [],
+                  [AC_MSG_ERROR([dnl
+Unable to locate either a built or installed Google Test at '${with_gtest}'.])
+                  ])])
+      AS_IF([test -x "${GTEST_CONFIG}"], [],
+            [AC_PATH_PROG([GTEST_CONFIG], [gtest-config])])
+      AS_IF([test -x "${GTEST_CONFIG}"],
+            [AC_MSG_CHECKING([for Google Test version >= ${GTEST_MIN_VERSION}])
+            AS_IF([${GTEST_CONFIG} --min-version=${GTEST_MIN_VERSION}],
+                  [AC_MSG_RESULT([yes])
+                  HAVE_BUILT_GTEST="yes"],
+                  [AC_MSG_RESULT([no])])])])
+AS_IF([test "x${HAVE_BUILT_GTEST}" = "xyes"],
+      [GTEST_CPPFLAGS=`${GTEST_CONFIG} --cppflags`
+      GTEST_CXXFLAGS=`${GTEST_CONFIG} --cxxflags`
+      GTEST_LDFLAGS=`${GTEST_CONFIG} --ldflags`
+      GTEST_LIBS=`${GTEST_CONFIG} --libs`
+      GTEST_VERSION=`${GTEST_CONFIG} --version`],
+      [
+      # GTEST_CONFIG needs to be executable both in a Makefile environment and
+      # in a shell script environment, so resolve an absolute path for it here.
+      GTEST_CONFIG="`pwd -P`/../googletest/scripts/gtest-config"
+      GTEST_CPPFLAGS='-I$(top_srcdir)/../googletest/include'
+      GTEST_CXXFLAGS='-g'
+      GTEST_LDFLAGS=''
+      GTEST_LIBS='$(top_builddir)/../googletest/lib/libgtest.la'
+      GTEST_VERSION="${GTEST_MIN_VERSION}"])
+# TODO(chandlerc@google.com) Check the types, structures, and other compiler
+# and architecture characteristics.
+# Output the generated files. No further autoconf macros may be used.
+AC_OUTPUT
+‎googletest/configure.ac‎
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,68 @@
+m4_include(m4/acx_pthread.m4)
+# At this point, the Xcode project assumes the version string will be three
+# integers separated by periods and surrounded by square brackets (e.g.
+# "[1.0.1]"). It also asumes that there won't be any closing parenthesis
+# between "AC_INIT(" and the closing ")" including comments and strings.
+AC_INIT([Google C++ Testing Framework],
+        [1.8.0],
+        [googletestframework@googlegroups.com],
+        [gtest])
+# Provide various options to initialize the Autoconf and configure processes.
+AC_PREREQ([2.59])
+AC_CONFIG_SRCDIR([./LICENSE])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_HEADERS([build-aux/config.h])
+AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([scripts/gtest-config], [chmod +x scripts/gtest-config])
+# Initialize Automake with various options. We require at least v1.9, prevent
+# pedantic complaints about package files, and enable various distribution
+# targets.
+AM_INIT_AUTOMAKE([1.9 dist-bzip2 dist-zip foreign subdir-objects])
+# Check for programs used in building Google Test.
+AC_PROG_CC
+AC_PROG_CXX
+AC_LANG([C++])
+AC_PROG_LIBTOOL
+# TODO(chandlerc@google.com): Currently we aren't running the Python tests
+# against the interpreter detected by AM_PATH_PYTHON, and so we condition
+# HAVE_PYTHON by requiring "python" to be in the PATH, and that interpreter's
+# version to be >= 2.3. This will allow the scripts to use a "/usr/bin/env"
+# hashbang.
+PYTHON=  # We *do not* allow the user to specify a python interpreter
+AC_PATH_PROG([PYTHON],[python],[:])
+AS_IF([test "$PYTHON" != ":"],
+      [AM_PYTHON_CHECK_VERSION([$PYTHON],[2.3],[:],[PYTHON=":"])])
+AM_CONDITIONAL([HAVE_PYTHON],[test "$PYTHON" != ":"])
+# Configure pthreads.
+AC_ARG_WITH([pthreads],
+            [AS_HELP_STRING([--with-pthreads],
+               [use pthreads (default is yes)])],
+            [with_pthreads=$withval],
+            [with_pthreads=check])
+have_pthreads=no
+AS_IF([test "x$with_pthreads" != "xno"],
+      [ACX_PTHREAD(
+        [],
+        [AS_IF([test "x$with_pthreads" != "xcheck"],
+               [AC_MSG_FAILURE(
+                 [--with-pthreads was specified, but unable to be used])])])
+       have_pthreads="$acx_pthread_ok"])
+AM_CONDITIONAL([HAVE_PTHREADS],[test "x$have_pthreads" = "xyes"])
+AC_SUBST(PTHREAD_CFLAGS)
+AC_SUBST(PTHREAD_LIBS)
+# TODO(chandlerc@google.com) Check for the necessary system headers.
+# TODO(chandlerc@google.com) Check the types, structures, and other compiler
+# and architecture characteristics.
+# Output the generated files. No further autoconf macros may be used.
+AC_OUTPUT
+0 commit comments
+Comments
+0
+ (0)
+Comment
+You're not receiving notifications from this thread.
+
+7 files remain
